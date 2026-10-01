@@ -1,0 +1,133 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String           @id @default(uuid())
+  email         String?          @unique
+  name          String?
+  passwordHash  String?
+  isGuest       Boolean          @default(false)
+  preferences   String?          // JSON: { preferredColors: [], excludedColors: [], styles: [], fitPreference: "" }
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+
+  clothingItems   ClothingItem[]
+  outfits         Outfit[]
+  calendarEntries CalendarEntry[]
+  feedbacks       OutfitFeedback[]
+
+  @@map("users")
+}
+
+model ClothingItem {
+  id                String       @id @default(uuid())
+  userId            String
+  name              String
+  originalImageUrl  String
+  processedImageUrl String
+  thumbnailUrl      String
+  category          String       // TOP, BOTTOM, DRESS, OUTERWEAR, SHOES, BAG, ACCESSORY
+  subcategory       String       // e.g., "Crewneck T-shirt", "Tailored Trousers", "Chelsea Boots"
+  primaryColor      String       // e.g., "Navy Blue"
+  primaryColorHex   String       // e.g., "#1b2a4a"
+  secondaryColor    String?      // e.g., "White"
+  secondaryColorHex String?      // e.g., "#ffffff"
+  pattern           String       // Solid, Striped, Plaid, Floral, Graphic, etc.
+  material          String       // Cotton, Linen, Wool, Silk, Denim, Leather, Synthetic
+  fit               String       // Slim, Regular, Relaxed, Oversized, Tailored
+  season            String       // All-Season, Summer, Winter, Spring, Fall
+  formality         String       // Casual, Smart Casual, Business Casual, Formal, Athletic
+  isFavorite        Boolean      @default(false)
+  wearCount         Int          @default(0)
+  lastWornAt        DateTime?
+  notes             String?
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  outfitItems OutfitItem[]
+
+  @@index([userId])
+  @@index([category])
+  @@index([formality])
+  @@map("clothing_items")
+}
+
+model Outfit {
+  id                 String           @id @default(uuid())
+  userId             String
+  name               String
+  occasion           String           // Casual, Date Night, Business, Gym, Travel, Party
+  weatherSuitability String?          // e.g., "15-20°C Mild / Dry"
+  confidenceScore    Int              @default(90) // 1-100
+  stylingExplanation String           // Reasoning for color harmony, proportions, formality
+  isFavorite         Boolean          @default(false)
+  wearCount          Int              @default(0)
+  lastWornAt         DateTime?
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items           OutfitItem[]
+  calendarEntries CalendarEntry[]
+  feedbacks       OutfitFeedback[]
+
+  @@index([userId])
+  @@map("outfits")
+}
+
+model OutfitItem {
+  id             String       @id @default(uuid())
+  outfitId       String
+  clothingItemId String
+  slot           String       // TOP, BOTTOM, OUTERWEAR, SHOES, BAG, ACCESSORY, DRESS
+  isLocked       Boolean      @default(false)
+
+  outfit       Outfit       @relation(fields: [outfitId], references: [id], onDelete: Cascade)
+  clothingItem ClothingItem @relation(fields: [clothingItemId], references: [id], onDelete: Cascade)
+
+  @@unique([outfitId, clothingItemId])
+  @@index([outfitId])
+  @@index([clothingItemId])
+  @@map("outfit_items")
+}
+
+model CalendarEntry {
+  id        String   @id @default(uuid())
+  userId    String
+  outfitId  String
+  date      DateTime // Calendar day (YYYY-MM-DD)
+  notes     String?
+  wasWorn   Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  outfit Outfit @relation(fields: [outfitId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([date])
+  @@map("calendar_entries")
+}
+
+model OutfitFeedback {
+  id        String   @id @default(uuid())
+  userId    String
+  outfitId  String
+  liked     Boolean  // true = thumbs up / like, false = dislike
+  comment   String?
+  createdAt DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  outfit Outfit @relation(fields: [outfitId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([outfitId])
+  @@map("outfit_feedbacks")
+}
