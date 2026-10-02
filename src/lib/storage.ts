@@ -77,31 +77,25 @@ export async function processAndSaveImage(
   }
 
   const itemId = uuidv4();
-  const userUploadsDir = path.join(process.cwd(), "public", "uploads", userId, "items", itemId);
-  await ensureDir(userUploadsDir);
 
   // Sharp instance: .rotate() auto-orients from EXIF orientation, then strips all EXIF/GPS tags
   const sharpInstance = sharp(workingBuffer).rotate();
   const metadata = await sharpInstance.metadata();
 
-  // 1. Optimized display image (max 1400px width/height, WebP, EXIF stripped)
-  const displayFileName = `display_${itemId}.webp`;
-  const displayFilePath = path.join(userUploadsDir, displayFileName);
-  await sharp(workingBuffer)
+  // 1. Optimized display image (max 1200px width/height, WebP, quality 85, EXIF stripped)
+  const displayBuffer = await sharp(workingBuffer)
     .rotate()
     .resize({
-      width: 1400,
-      height: 1400,
+      width: 1200,
+      height: 1200,
       fit: "inside",
       withoutEnlargement: true,
     })
     .webp({ quality: 85 })
-    .toFile(displayFilePath);
+    .toBuffer();
 
-  // 2. High-performance thumbnail (360x360, WebP)
-  const thumbFileName = `thumb_${itemId}.webp`;
-  const thumbFilePath = path.join(userUploadsDir, thumbFileName);
-  await sharp(workingBuffer)
+  // 2. High-performance thumbnail (360x360, WebP, quality 80)
+  const thumbBuffer = await sharp(workingBuffer)
     .rotate()
     .resize({
       width: 360,
@@ -110,19 +104,46 @@ export async function processAndSaveImage(
       position: "centre",
     })
     .webp({ quality: 80 })
-    .toFile(thumbFilePath);
+    .toBuffer();
 
   // 3. High-precision background removal cutout (PNG with alpha channel)
   const cutoutBuffer = await removeBackground(workingBuffer, cutoutOptions);
-  const cutoutFileName = `cutout_${itemId}.png`;
-  const cutoutFilePath = path.join(userUploadsDir, cutoutFileName);
-  await fs.writeFile(cutoutFilePath, cutoutBuffer);
 
-  // Relative URLs served through Next.js public directory
-  const relativeBasePath = `/uploads/${userId}/items/${itemId}`;
-  const displayUrl = `${relativeBasePath}/${displayFileName}`;
-  const thumbUrl = `${relativeBasePath}/${thumbFileName}`;
-  const cutoutUrl = `${relativeBasePath}/${cutoutFileName}`;
+  // Generate Base64 Data URLs (100% resilient across serverless/Vercel/cloud DB)
+  const displayDataUrl = `data:image/webp;base64,${displayBuffer.toString("base64")}`;
+  const thumbDataUrl = `data:image/webp;base64,${thumbBuffer.toString("base64")}`;
+  const cutoutDataUrl = `data:image/png;base64,${cutoutBuffer.toString("base64")}`;
+
+  let displayUrl = displayDataUrl;
+  let thumbUrl = thumbDataUrl;
+  let cutoutUrl = cutoutDataUrl;
+
+  // On local development, attempt to save to disk if writable
+  try {
+    const userUploadsDir = path.join(process.cwd(), "public", "uploads", userId, "items", itemId);
+    await ensureDir(userUploadsDir);
+
+    const displayFileName = `display_${itemId}.webp`;
+    const displayFilePath = path.join(userUploadsDir, displayFileName);
+    await fs.writeFile(displayFilePath, displayBuffer);
+
+    const thumbFileName = `thumb_${itemId}.webp`;
+    const thumbFilePath = path.join(userUploadsDir, thumbFileName);
+    await fs.writeFile(thumbFilePath, thumbBuffer);
+
+    const cutoutFileName = `cutout_${itemId}.png`;
+    const cutoutFilePath = path.join(userUploadsDir, cutoutFileName);
+    await fs.writeFile(cutoutFilePath, cutoutBuffer);
+
+    if (!process.env.VERCEL) {
+      const relativeBasePath = `/uploads/${userId}/items/${itemId}`;
+      displayUrl = `${relativeBasePath}/${displayFileName}`;
+      thumbUrl = `${relativeBasePath}/${thumbFileName}`;
+      cutoutUrl = `${relativeBasePath}/${cutoutFileName}`;
+    }
+  } catch {
+    // Read-only filesystem on Vercel / AWS Lambda - seamlessly uses data URLs
+  }
 
   return {
     itemId,
@@ -140,10 +161,10 @@ export async function processAndSaveImage(
  * Removes all files for a specific item.
  */
 export async function deleteItemFiles(userId: string, itemId: string) {
-  const itemDir = path.join(process.cwd(), "public", "uploads", userId, "items", itemId);
   try {
+    const itemDir = path.join(process.cwd(), "public", "uploads", userId, "items", itemId);
     await fs.rm(itemDir, { recursive: true, force: true });
-  } catch (error) {
-    console.error(`Failed to delete item files at ${itemDir}:`, error);
+  } catch {
+    // Ignore on serverless
   }
 }

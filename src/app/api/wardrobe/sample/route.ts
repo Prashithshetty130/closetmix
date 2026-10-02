@@ -178,23 +178,45 @@ export async function POST() {
         .png()
         .toBuffer();
 
-      const displayPath = path.join(userDir, `display_${itemId}.webp`);
-      const thumbPath = path.join(userDir, `thumb_${itemId}.webp`);
-      const cutoutPath = path.join(userDir, `cutout_${itemId}.png`);
+      const displayBuffer = await sharp(visualBuffer).webp({ quality: 85 }).toBuffer();
+      const thumbBuffer = await sharp(visualBuffer).resize(360, 360).webp({ quality: 80 }).toBuffer();
 
-      await sharp(visualBuffer).webp({ quality: 85 }).toFile(displayPath);
-      await sharp(visualBuffer).resize(360, 360).webp({ quality: 80 }).toFile(thumbPath);
-      await fs.writeFile(cutoutPath, visualBuffer);
+      const displayDataUrl = `data:image/webp;base64,${displayBuffer.toString("base64")}`;
+      const thumbDataUrl = `data:image/webp;base64,${thumbBuffer.toString("base64")}`;
+      const cutoutDataUrl = `data:image/png;base64,${visualBuffer.toString("base64")}`;
 
-      const relBase = `/uploads/${userId}/items/${itemId}`;
+      let originalUrl = displayDataUrl;
+      let thumbUrl = thumbDataUrl;
+      let cutoutUrl = cutoutDataUrl;
+
+      try {
+        const userDir = path.join(process.cwd(), "public", "uploads", userId, "items", itemId);
+        await fs.mkdir(userDir, { recursive: true });
+
+        const displayPath = path.join(userDir, `display_${itemId}.webp`);
+        const thumbPath = path.join(userDir, `thumb_${itemId}.webp`);
+        const cutoutPath = path.join(userDir, `cutout_${itemId}.png`);
+
+        await fs.writeFile(displayPath, displayBuffer);
+        await fs.writeFile(thumbPath, thumbBuffer);
+        await fs.writeFile(cutoutPath, visualBuffer);
+
+        if (!process.env.VERCEL) {
+          const relBase = `/uploads/${userId}/items/${itemId}`;
+          originalUrl = `${relBase}/display_${itemId}.webp`;
+          cutoutUrl = `${relBase}/cutout_${itemId}.png`;
+          thumbUrl = `${relBase}/thumb_${itemId}.webp`;
+        }
+      } catch {}
+
       const clothingRecord = await prisma.clothingItem.create({
         data: {
           id: itemId,
           userId,
           name: item.name,
-          originalImageUrl: `${relBase}/display_${itemId}.webp`,
-          processedImageUrl: `${relBase}/cutout_${itemId}.png`,
-          thumbnailUrl: `${relBase}/thumb_${itemId}.webp`,
+          originalImageUrl: originalUrl,
+          processedImageUrl: cutoutUrl,
+          thumbnailUrl: thumbUrl,
           category: item.category,
           subcategory: item.subcategory,
           primaryColor: item.primaryColor,
