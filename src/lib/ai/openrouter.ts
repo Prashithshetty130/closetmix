@@ -79,7 +79,7 @@ Output a valid JSON object matching this schema:
       },
       body: JSON.stringify({
         model: DEFAULT_MODEL,
-        max_tokens: 800,
+        max_tokens: 450,
         response_format: { type: "json_object" },
         messages: [
           {
