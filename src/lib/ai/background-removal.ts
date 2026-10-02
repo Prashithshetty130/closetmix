@@ -33,13 +33,16 @@ async function getRMBGModel() {
   try {
     const { AutoModel, AutoProcessor, env } = await import("@huggingface/transformers");
 
-    // Configure Hugging Face cache to writable /tmp on serverless environments
     const cacheDir = path.join(os.tmpdir(), ".transformers-cache");
     env.cacheDir = cacheDir;
 
+    // Check for offline bundled model in repository
+    const localModelDir = path.join(process.cwd(), "src", "lib", "ai", "models", "rmbg-1.4");
+    const modelSource = localModelDir;
+
     const [model, processor] = await Promise.all([
-      AutoModel.from_pretrained("briaai/RMBG-1.4"),
-      AutoProcessor.from_pretrained("briaai/RMBG-1.4"),
+      AutoModel.from_pretrained(modelSource),
+      AutoProcessor.from_pretrained(modelSource),
     ]);
 
     rmbgModel = model;
