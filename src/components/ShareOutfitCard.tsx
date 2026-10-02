@@ -69,7 +69,7 @@ export default function ShareOutfitCard({ outfit, onClose }: ShareOutfitCardProp
       ctx.fillStyle = cardTheme === "dark" ? "#e5b95f" : "#a67c1e";
       ctx.font = "bold 24px 'Playfair Display', serif";
       ctx.textAlign = "center";
-      ctx.fillText(includeWatermark ? "VESTIQ AI ATELIER" : "CURATED OUTFIT EDIT", width / 2, 70);
+      ctx.fillText(includeWatermark ? "CLOSETMIX AI ATELIER" : "CURATED OUTFIT EDIT", width / 2, 70);
 
       // Outfit Title
       ctx.fillStyle = cardTheme === "dark" ? "#ffffff" : "#1a1a1a";
@@ -141,7 +141,7 @@ export default function ShareOutfitCard({ outfit, onClose }: ShareOutfitCardProp
       const dataUrl = canvas.toDataURL("image/png");
       const a = document.createElement("a");
       a.href = dataUrl;
-      a.download = `vestiq-outfit-${outfit.id}.png`;
+      a.download = `closetmix-outfit-${outfit.id}.png`;
       a.click();
     } catch (err) {
       alert("Failed to export image.");
@@ -240,7 +240,7 @@ export default function ShareOutfitCard({ outfit, onClose }: ShareOutfitCardProp
               checked={includeWatermark}
               onChange={(e) => setIncludeWatermark(e.target.checked)}
             />
-            <span>Vestiq Brandmark</span>
+            <span>Closetmix Brandmark</span>
           </label>
 
           <div style={{ display: "flex", alignItems: "center", gap: "8px", marginLeft: "auto" }}>
@@ -279,7 +279,7 @@ export default function ShareOutfitCard({ outfit, onClose }: ShareOutfitCardProp
                 marginBottom: "6px",
               }}
             >
-              VESTIQ AI ATELIER
+              CLOSETMIX AI ATELIER
             </p>
           )}
 

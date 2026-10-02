@@ -474,7 +474,7 @@ export default function SettingsPage() {
           </span>
         </div>
         <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", lineHeight: 1.5, marginBottom: "20px" }}>
-          Vestiq isolates clothing backgrounds using edge-connected boundary sampling with 100% solid color retention. Connect your free Google Gemini API key to unlock multimodal style, fabric, and silhouette detection.
+          Closetmix isolates clothing backgrounds using edge-connected boundary sampling with 100% solid color retention. Connect your free Google Gemini API key to unlock multimodal style, fabric, and silhouette detection.
         </p>
 
         <button

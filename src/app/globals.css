@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&family=Space+Grotesk:wght@500;700&display=swap');
 
 :root {
-  /* Dark Luxury (Default Vestiq Palette) */
+  /* Dark Luxury (Default Closetmix Palette) */
   --bg-base: #08090d;
   --bg-surface: #10121a;
   --bg-card: rgba(18, 21, 30, 0.7);

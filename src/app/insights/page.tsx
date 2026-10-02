@@ -88,7 +88,7 @@ export default function InsightsPage() {
 
   const copyPackingChecklist = () => {
     if (!capsuleResult) return;
-    const text = `🧳 VESTIQ TRAVEL CAPSULE (${capsuleResult.totalPieces} Pieces for ${tripDays} Days):\n\n` +
+    const text = `🧳 CLOSETMIX TRAVEL CAPSULE (${capsuleResult.totalPieces} Pieces for ${tripDays} Days):\n\n` +
       capsuleResult.pieces.map((p, i) => `${i + 1}. [ ] ${p.name} (${p.category})`).join("\n") +
       `\n\nVersatility Score: ${capsuleResult.versatilityScore}%`;
 

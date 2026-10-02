@@ -1,6 +1,6 @@
-# Vestiq — Production Deployment Guide
+# Closetmix — Production Deployment Guide
 
-This guide details how to deploy **Vestiq (AI Digital Wardrobe & Intelligent Stylist)** to a zero-cost or ultra-low-cost production hosting environment.
+This guide details how to deploy **Closetmix (AI Digital Wardrobe & Intelligent Stylist)** to a zero-cost or ultra-low-cost production hosting environment.
 
 ---
 
@@ -19,7 +19,7 @@ This guide details how to deploy **Vestiq (AI Digital Wardrobe & Intelligent Sty
 ## 2. Step-by-Step Deployment Guide (Vercel + Neon)
 
 ### Step 1: Provision Free PostgreSQL Database (Neon or Supabase)
-1. Navigate to [Neon.tech](https://neon.tech) and create a free project named `vestiq-db`.
+1. Navigate to [Neon.tech](https://neon.tech) or [Supabase.com](https://supabase.com) and create a free project named `closetmix`.
 2. Copy your PostgreSQL connection string, which will look like:
    ```env
    DATABASE_URL="postgresql://username:password@ep-cool-cloud-123456.us-east-2.aws.neon.tech/neondb?sslmode=require"
@@ -43,9 +43,9 @@ This guide details how to deploy **Vestiq (AI Digital Wardrobe & Intelligent Sty
    ```bash
    git init
    git add .
-   git commit -m "feat: complete Vestiq wardrobe and styling AI application"
+   git commit -m "feat: complete Closetmix wardrobe and styling AI application"
    git branch -M main
-   git remote add origin https://github.com/your-username/vestiq.git
+   git remote add origin https://github.com/prashith-shetty/closetmix.git
    git push -u origin main
    ```
 2. Go to [Vercel Dashboard](https://vercel.com/new) and click **"Import Repository"**.
@@ -66,20 +66,20 @@ In the Vercel project settings under **Environment Variables**, add:
 | `NODE_ENV` | `production` | Enables production caching, HTTPS cookies, and optimized assets |
 | `NEXT_PUBLIC_APP_URL` | `https://your-domain.com` | Base public URL of your deployed application |
 
-4. Click **Deploy**. Vercel will build your application and assign a live production URL (e.g. `https://vestiq.vercel.app`).
+4. Click **Deploy**. Vercel will build your application and assign a live production URL (e.g. `https://closetmix.vercel.app`).
 
 ---
 
 ## 3. Configuring a Custom Domain
 
 1. Open your Vercel Project Dashboard $\rightarrow$ **Settings** $\rightarrow$ **Domains**.
-2. Enter your custom domain (e.g., `vestiq.app` or `wardrobe.yourdomain.com`).
+2. Enter your custom domain (e.g., `closetmix.app` or `wardrobe.yourdomain.com`).
 3. Configure DNS records with your registrar (Cloudflare, Namecheap, GoDaddy):
-   * **For Root Apex Domain (`vestiq.app`)**:
+   * **For Root Apex Domain (`closetmix.app`)**:
      * Type: `A`
      * Name: `@`
      * Value: `76.76.21.21`
-   * **For Subdomain / WWW (`www.vestiq.app`)**:
+   * **For Subdomain / WWW (`www.closetmix.app`)**:
      * Type: `CNAME`
      * Name: `www`
      * Value: `cname.vercel-dns.com`

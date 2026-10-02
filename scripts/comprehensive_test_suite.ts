@@ -28,10 +28,10 @@ async function api(path: string, options: RequestInit = {}) {
     headers,
   });
 
-  // Extract vestiq_session cookie
+  // Extract closetmix_session cookie
   const setCookie = res.headers.get('set-cookie');
   if (setCookie) {
-    const match = setCookie.match(/vestiq_session=[^;]+/);
+    const match = setCookie.match(/closetmix_session=[^;]+/);
     if (match) {
       sessionCookie = match[0];
     }
@@ -40,7 +40,7 @@ async function api(path: string, options: RequestInit = {}) {
   if (!sessionCookie && typeof (res.headers as any).getSetCookie === 'function') {
     const cookiesList = (res.headers as any).getSetCookie();
     for (const c of cookiesList) {
-      const match = c.match(/vestiq_session=[^;]+/);
+      const match = c.match(/closetmix_session=[^;]+/);
       if (match) {
         sessionCookie = match[0];
         break;
@@ -73,7 +73,7 @@ async function runTest(suite: string, name: string, fn: () => Promise<void>) {
 
 async function main() {
   console.log('\n======================================================');
-  console.log('   VESTIQ SUITE: COMPREHENSIVE END-TO-END AUDIT       ');
+  console.log('   CLOSETMIX SUITE: COMPREHENSIVE END-TO-END AUDIT    ');
   console.log('======================================================\n');
 
   // 1. Health & Core

@@ -1,4 +1,4 @@
-# VESTIQ — AI Digital Wardrobe & Intelligent Outfit Stylist
+# CLOSETMIX — AI Digital Wardrobe & Intelligent Outfit Stylist
 
 [![Next.js 15](https://img.shields.io/badge/Next.js-15_App_Router-black?logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?logo=typescript)](https://www.typescriptlang.org/)
@@ -6,7 +6,7 @@
 [![Google Gemini](https://img.shields.io/badge/Gemini_API-Multimodal_Vision-4285F4?logo=google)](https://aistudio.google.com/)
 [![Tests](https://img.shields.io/badge/Tests-116%2F116_Passing-emerald)](tests/)
 
-**Vestiq** transforms physical closets into a smart digital wardrobe. Powered by multimodal AI vision and fashion theory heuristics, it isolates backgrounds from clothing photos, auto-detects 8+ garment dimensions, analyzes wardrobe gaps, and curates flat-lay outfits tuned to your weather, occasion, and personal style.
+**Closetmix** transforms physical closets into a smart digital wardrobe. Powered by multimodal AI vision and fashion theory heuristics, it isolates backgrounds from clothing photos, auto-detects 8+ garment dimensions, analyzes wardrobe gaps, and curates flat-lay outfits tuned to your weather, occasion, and personal style.
 
 ---
 
@@ -34,8 +34,8 @@
 
 ### 1. Clone & Install Dependencies
 ```bash
-git clone https://github.com/your-username/vestiq.git
-cd vestiq
+git clone https://github.com/prashith-shetty/closetmix.git
+cd closetmix
 npm install
 ```
 
@@ -61,7 +61,7 @@ Open **[http://localhost:3000](http://localhost:3000)** in your browser.
 
 ## 🧪 Automated Testing Suite
 
-Vestiq includes a full 32-test end-to-end integration suite and phase verification test suites:
+Closetmix includes a full 32-test end-to-end integration suite and phase verification test suites:
 
 ```bash
 # Run End-to-End Comprehensive Audit Suite (32/32 tests: Auth, Wardrobe, AI, Outfits, Planner, Insights, UI)

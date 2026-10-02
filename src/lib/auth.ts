@@ -6,9 +6,9 @@ import fs from "fs/promises";
 import path from "path";
 
 const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "vestiq_super_secret_dev_key_at_least_32_chars_long"
+  process.env.JWT_SECRET || "closetmix_super_secret_dev_key_at_least_32_chars_long"
 );
-const SESSION_COOKIE_NAME = "vestiq_session";
+const SESSION_COOKIE_NAME = "closetmix_session";
 const TOKEN_EXPIRY = "30d";
 
 export interface SessionPayload {

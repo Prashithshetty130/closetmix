@@ -75,7 +75,7 @@ Output a valid JSON object matching this schema:
         Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
         "HTTP-Referer": process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
-        "X-Title": "Vestiq AI Digital Wardrobe",
+        "X-Title": "Closetmix AI Digital Wardrobe",
       },
       body: JSON.stringify({
         model: DEFAULT_MODEL,
@@ -192,7 +192,7 @@ Return JSON:
         Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
         "HTTP-Referer": process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
-        "X-Title": "Vestiq AI Digital Wardrobe",
+        "X-Title": "Closetmix AI Digital Wardrobe",
       },
       body: JSON.stringify({
         model: DEFAULT_MODEL,

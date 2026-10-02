@@ -89,7 +89,7 @@ export default function Navbar() {
           {/* Brand Logo */}
           <Link
             href="/"
-            aria-label="Vestiq AI Atelier Homepage"
+            aria-label="Closetmix AI Atelier Homepage"
             style={{
               display: "flex",
               alignItems: "center",
@@ -122,7 +122,7 @@ export default function Navbar() {
                   color: "var(--text-primary)",
                 }}
               >
-                VESTIQ
+                CLOSETMIX
               </span>
               <span
                 style={{

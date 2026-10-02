@@ -49,8 +49,8 @@ export async function removeBackground(
   options?: BackgroundRemovalOptions
 ): Promise<Buffer> {
   const tempId = uuidv4();
-  const tempInput = path.join(os.tmpdir(), `vestiq_in_${tempId}.png`);
-  const tempOutput = path.join(os.tmpdir(), `vestiq_out_${tempId}.png`);
+  const tempInput = path.join(os.tmpdir(), `closetmix_in_${tempId}.png`);
+  const tempOutput = path.join(os.tmpdir(), `closetmix_out_${tempId}.png`);
 
   try {
     let workingBuffer = imageBuffer;

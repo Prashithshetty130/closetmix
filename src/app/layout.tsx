@@ -3,7 +3,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 
 export const metadata: Metadata = {
-  title: "Vestiq — AI Wardrobe & Intelligent Outfit Stylist",
+  title: "Closetmix — AI Wardrobe & Intelligent Outfit Stylist",
   description:
     "Digitize your clothing, eliminate decision fatigue, and let multimodal AI style personalized outfits matched to your weather, occasion, and aesthetics.",
   keywords: ["AI Stylist", "Digital Wardrobe", "Capsule Wardrobe", "Outfit Generator", "Fashion AI"],
