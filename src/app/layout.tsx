@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import CookieConsent from "@/components/CookieConsent";
 
 export const metadata: Metadata = {
   title: "Closetmix — AI Wardrobe & Intelligent Outfit Stylist",
@@ -22,9 +24,11 @@ export default function RootLayout({
       </head>
       <body>
         <Navbar />
-        <main style={{ minHeight: "calc(100vh - 75px)", paddingBottom: "60px" }}>
+        <main style={{ minHeight: "calc(100vh - 75px)", paddingBottom: "40px" }}>
           {children}
         </main>
+        <Footer />
+        <CookieConsent />
       </body>
     </html>
   );

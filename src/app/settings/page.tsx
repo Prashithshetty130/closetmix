@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ShieldAlert, Trash2, User, KeyRound, Sparkles, LogOut, CheckCircle2, AlertCircle, Key } from "lucide-react";
 import AiKeyModal from "@/components/AiKeyModal";
@@ -31,6 +32,7 @@ export default function SettingsPage() {
   const [authError, setAuthError] = useState("");
   const [authSuccess, setAuthSuccess] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
 
   // Purge state
   const [showPurgeModal, setShowPurgeModal] = useState(false);
@@ -95,6 +97,12 @@ export default function SettingsPage() {
     e.preventDefault();
     setAuthError("");
     setAuthSuccess("");
+
+    if ((user?.isGuest || authMode === "register") && !agreedToTerms) {
+      setAuthError("Please agree to the Terms of Service and Privacy Policy to proceed.");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -437,6 +445,43 @@ export default function SettingsPage() {
                 }}
               />
             </div>
+
+            {(user?.isGuest || authMode === "register") && (
+              <label
+                style={{
+                  display: "flex",
+                  alignItems: "flex-start",
+                  gap: "10px",
+                  fontSize: "0.85rem",
+                  color: "var(--text-secondary)",
+                  cursor: "pointer",
+                  marginTop: "6px",
+                  lineHeight: 1.4,
+                }}
+              >
+                <input
+                  type="checkbox"
+                  required
+                  checked={agreedToTerms}
+                  onChange={(e) => setAgreedToTerms(e.target.checked)}
+                  style={{
+                    marginTop: "2px",
+                    accentColor: "var(--gold-primary)",
+                    cursor: "pointer",
+                  }}
+                />
+                <span>
+                  I agree to the{" "}
+                  <Link href="/terms" target="_blank" style={{ color: "var(--gold-primary)", textDecoration: "underline" }}>
+                    Terms and Conditions
+                  </Link>{" "}
+                  and acknowledge the{" "}
+                  <Link href="/privacy" target="_blank" style={{ color: "var(--gold-primary)", textDecoration: "underline" }}>
+                    Privacy Policy
+                  </Link>.
+                </span>
+              </label>
+            )}
 
             <button type="submit" disabled={isSubmitting} className="btn-primary" style={{ marginTop: "8px" }}>
               {isSubmitting ? "Upgrading..." : "Save Wardrobe Permanently"}

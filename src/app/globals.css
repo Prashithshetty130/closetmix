@@ -339,4 +339,31 @@ button, a, input, select {
   animation: spin 0.8s linear infinite;
 }
 
+/* Accessibility & Keyboard Navigation (WCAG 2.1 AA) */
+:focus-visible {
+  outline: 2px solid var(--gold-primary) !important;
+  outline-offset: 3px !important;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--gold-primary) !important;
+  outline-offset: 2px !important;
+}
+
+/* High-contrast and reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 
