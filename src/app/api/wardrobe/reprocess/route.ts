@@ -39,36 +39,50 @@ export async function POST(req: Request) {
 
     for (const item of items) {
       try {
-        // Path to the original or display image
-        const cleanOriginalUrl = item.originalImageUrl.replace(/^\//, "");
-        const originalDiskPath = path.join(process.cwd(), "public", cleanOriginalUrl);
-
         let imageBuffer: Buffer;
-        try {
-          imageBuffer = await fs.readFile(originalDiskPath);
-        } catch (readErr) {
-          console.warn(`Could not read original image at ${originalDiskPath}, skipping item ${item.id}`);
-          continue;
+
+        if (item.originalImageUrl.startsWith("data:")) {
+          const parts = item.originalImageUrl.split(",");
+          imageBuffer = Buffer.from(parts[1] || "", "base64");
+        } else {
+          // Path to the original or display image on local disk
+          const cleanOriginalUrl = item.originalImageUrl.replace(/^\//, "");
+          const originalDiskPath = path.join(process.cwd(), "public", cleanOriginalUrl);
+          try {
+            imageBuffer = await fs.readFile(originalDiskPath);
+          } catch (readErr) {
+            console.warn(`Could not read original image at ${originalDiskPath}, skipping item ${item.id}`);
+            continue;
+          }
         }
 
-        // 1. Re-tag using improved computer vision / OpenRouter vision to extract category & garment bounding box
+        // 1. Re-tag using computer vision / OpenRouter vision
         const newTags = await analyzeGarmentImage(imageBuffer, item.name, userApiKey);
 
-        // 2. Generate new high-precision studio cutout with bounding box & shadow suppression
+        // 2. Generate new high-precision studio cutout
         const newCutoutBuffer = await removeBackground(imageBuffer, {
           box_2d: newTags.box_2d as [number, number, number, number] | undefined,
         });
 
-        // Path to cutout PNG
-        const cleanCutoutUrl = item.processedImageUrl.replace(/^\//, "");
-        const cutoutDiskPath = path.join(process.cwd(), "public", cleanCutoutUrl);
-        await fs.writeFile(cutoutDiskPath, newCutoutBuffer);
+        const newCutoutDataUrl = `data:image/png;base64,${newCutoutBuffer.toString("base64")}`;
+        let updatedProcessedUrl = newCutoutDataUrl;
+
+        // If not on Vercel, also attempt disk write if relative path
+        if (!process.env.VERCEL && !item.processedImageUrl.startsWith("data:")) {
+          try {
+            const cleanCutoutUrl = item.processedImageUrl.replace(/^\//, "");
+            const cutoutDiskPath = path.join(process.cwd(), "public", cleanCutoutUrl);
+            await fs.writeFile(cutoutDiskPath, newCutoutBuffer);
+            updatedProcessedUrl = item.processedImageUrl;
+          } catch {}
+        }
 
         // 3. Update database record
         const updatedItem = await prisma.clothingItem.update({
           where: { id: item.id },
           data: {
             name: newTags.name,
+            processedImageUrl: updatedProcessedUrl,
             category: newTags.category,
             subcategory: newTags.subcategory,
             primaryColor: newTags.primaryColor,

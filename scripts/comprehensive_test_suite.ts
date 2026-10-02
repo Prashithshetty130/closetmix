@@ -10,7 +10,7 @@ interface TestResult {
 }
 
 const results: TestResult[] = [];
-const BASE_URL = 'http://localhost:3000';
+const BASE_URL = (process.env.TEST_BASE_URL || 'http://localhost:3000').trim();
 
 let sessionCookie = '';
 
@@ -420,6 +420,9 @@ async function main() {
     '/insights',
     '/settings',
     '/privacy',
+    '/terms',
+    '/cookies',
+    '/refunds',
   ];
 
   for (const page of pages) {

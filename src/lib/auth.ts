@@ -244,20 +244,11 @@ export async function upgradeGuestUser(guestUserId: string, email: string, passw
  * and all stored images from disk.
  */
 export async function purgeUserData(userId: string) {
-  // 1. Purge physical storage folder with retry for Windows lock release
-  const userDir = path.join(process.cwd(), "public", "uploads", userId);
-  for (let attempt = 0; attempt < 3; attempt++) {
-    try {
-      await fs.rm(userDir, { recursive: true, force: true, maxRetries: 3, retryDelay: 100 });
-      break;
-    } catch (err: any) {
-      if (attempt === 2) {
-        console.error(`Failed to clean user directory for ${userId}:`, err);
-      } else {
-        await new Promise((r) => setTimeout(r, 200));
-      }
-    }
-  }
+  // 1. Purge physical storage folder if writable
+  try {
+    const userDir = path.join(process.cwd(), "public", "uploads", userId);
+    await fs.rm(userDir, { recursive: true, force: true });
+  } catch {}
 
   // 2. Cascade delete database records
   await prisma.user.delete({
